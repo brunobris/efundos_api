@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  postgres-docker:
+    image: postgres:9.6
+    environment:
+      POSTGRES_DB: efundodb
+      POSTGRES_USER: efundo
+      POSTGRES_PASSWORD: "Postgres2020!"
+    ports:
+      - "9091:5432"
+    volumes:
+      - volpostgre:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  rest-server:
+    build:
+      context: ./src
+    ports:
+      - "9092:5000"
+    env_file:
+      - dev.env
+    volumes:
+      - .:/app
+    networks:
+      - app-network
+    command: ['sh', 'src/start-local.sh']
+
+volumes:
+  volpostgre:
+
+networks:
+  app-network:
+    driver: bridge
