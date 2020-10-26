@@ -34,18 +34,19 @@ def update_lista_fundos():
 
     #TODO: Buscar detalhes do fundo, e setar os dados novamente (para não ficar procurando o que mudou)
     
+    if detalhe_request:
+      fundoDetalhe = FundoDetalhe(
+                        parent = fundo, 
+                        liquidez_diaria = detalhe_request['liquidez_diaria'], 
+                        ultimo_rendimento = detalhe_request['ultimo_rendimento'],
+                        dividend_yield = detalhe_request['dy'],
+                        patrimonio_liquido = detalhe_request['patrimonio_liquido'],
+                        valor_patrimonial = detalhe_request['valor_patrimonial'],
+                        rentabilidade_mes = detalhe_request['rentabilidade_mes']
+                      )
 
-    fundoDetalhe = FundoDetalhe(
-                      parent = fundo, 
-                      liquidez_diaria = detalhe_request['liquidez_diaria'], 
-                      ultimo_rendimento = detalhe_request['ultimo_rendimento'],
-                      dividend_yield = detalhe_request['dy'],
-                      patrimonio_liquido = detalhe_request['patrimonio_liquido'],
-                      valor_patrimonial = detalhe_request['valor_patrimonial'],
-                      rentabilidade_mes = detalhe_request['rentabilidade_mes']
-                    )
+      db.session.add(fundoDetalhe)
 
-    db.session.add(fundoDetalhe)
     db.session.commit() 
     
     return json_success(request.json, 'Fundo cadastrado.')
