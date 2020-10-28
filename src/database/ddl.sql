@@ -1,10 +1,12 @@
-CREATE TABLE fundo (
-    id serial PRIMARY KEY,
-    codigo varchar(10) NOT NULL,
-    nome         varchar(150) NOT NULL,
-    administrador   varchar(150),
-    data_inicio timestamp ,
-    data_fim timestamp NULL
+CREATE TABLE public.fundo (
+	id serial NOT NULL,
+	codigo varchar(10) NOT NULL,
+	nome varchar(150) NOT NULL,
+	administrador varchar(150) NULL,
+	data_inicio timestamp NULL,
+	data_fim timestamp NULL,
+	CONSTRAINT codigo_unique UNIQUE (codigo),
+	CONSTRAINT fundo_pkey PRIMARY KEY (id)
 );
 
 create table fundo_detalhe (
@@ -13,7 +15,7 @@ create table fundo_detalhe (
 	ultimo_rendimento numeric(4,2) null,
 	dividend_yield numeric(4,2) null,
 	patrimonio_liquido numeric(12,2) null,
-	valor_patrimonial numeric(6,2) null,
+	valor_patrimonial numeric(8,2) null,
 	rentabilidade_mes numeric(4,2) null,
 	p_vp numeric(4,2) null
 )

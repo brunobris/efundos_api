@@ -24,35 +24,32 @@ def update_lista_fundos():
     codigo = fundo_request['symbol']
     nome = fundo_request['nome']
     admin = fundo_request['admin']
-
     detalhe_request = fundo_request['detalhe']
     
-    #TODO: Verificar se Fundo já existe, se não existir cadastra
+    fundo = db.session.query(Fundo).filter(Fundo.codigo.ilike(codigo)).first()
 
-    fundo = Fundo(codigo, nome, admin)
-    db.session.add(fundo)
+    fundo_detalhe = None
+    if fundo is None:
+      fundo = Fundo(codigo.upper(), nome, admin)
+      db.session.add(fundo)
 
-    #TODO: Buscar detalhes do fundo, e setar os dados novamente (para não ficar procurando o que mudou)
-    
-    if detalhe_request:
-      fundoDetalhe = FundoDetalhe(
-                        parent = fundo, 
-                        liquidez_diaria = detalhe_request['liquidez_diaria'], 
-                        ultimo_rendimento = detalhe_request['ultimo_rendimento'],
-                        dividend_yield = detalhe_request['dy'],
-                        patrimonio_liquido = detalhe_request['patrimonio_liquido'],
-                        valor_patrimonial = detalhe_request['valor_patrimonial'],
-                        rentabilidade_mes = detalhe_request['rentabilidade_mes']
-                      )
+    fundo_detalhe = db.session.query(FundoDetalhe).get(fundo.id) if fundo.id else None
+    if fundo_detalhe == None:
+      fundo_detalhe = FundoDetalhe(parent = fundo)
 
-      db.session.add(fundoDetalhe)
+    fundo_detalhe.liquidez_diaria = detalhe_request['liquidez_diaria'] 
+    fundo_detalhe.ultimo_rendimento = detalhe_request['ultimo_rendimento']
+    fundo_detalhe.dividend_yield = detalhe_request['dy']
+    fundo_detalhe.patrimonio_liquido = detalhe_request['patrimonio_liquido']
+    fundo_detalhe.rentabilidade_mes = detalhe_request['rentabilidade_mes']
+                      
+    db.session.add(fundo_detalhe)
 
     db.session.commit() 
     
     return json_success(request.json, 'Fundo cadastrado.')
   except Exception as e:
-    #db.session.rollback()
+    db.session.rollback()
     logger.warning(e)
-    logger.exception('Erro ao cadastrar fundo.', exc_info=False)
-    return Response('', status=500)
-    # return json_with_status(str(e), 500)
+    logger.exception('Erro ao cadastrar fundo.')
+    return json_with_status(str(e), 500)
