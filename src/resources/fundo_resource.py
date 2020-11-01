@@ -5,6 +5,7 @@ from commons.util import json_success, json_with_status, validar_cpf
 from app import db, app
 from models.fundo import Fundo
 from models.fundo_detalhe import FundoDetalhe
+from models.fundo_documentos import FundoDocumentos
 from flask_cors import CORS
 import os
 
@@ -25,6 +26,7 @@ def update_lista_fundos():
     nome = fundo_request['nome']
     admin = fundo_request['admin']
     detalhe_request = fundo_request['detalhe']
+    lista_documentos = fundo_request['detalhe']['lista_documentos']
     
     fundo = db.session.query(Fundo).filter(Fundo.codigo.ilike(codigo)).first()
 
@@ -44,6 +46,7 @@ def update_lista_fundos():
     fundo_detalhe.rentabilidade_mes = detalhe_request['rentabilidade_mes']
                       
     db.session.add(fundo_detalhe)
+    atualiza_documentos(fundo, lista_documentos)
 
     db.session.commit() 
     
@@ -53,3 +56,16 @@ def update_lista_fundos():
     logger.warning(e)
     logger.exception('Erro ao cadastrar fundo.')
     return json_with_status(str(e), 500)
+
+def atualiza_documentos(fundo, lista_documentos):
+
+  #Retorna lista de documentos, caso já existam
+  documentos_existentes = db.session.query(FundoDocumentos).filter(FundoDocumentos.fundo_id == fundo.id).all() if fundo.id else []
+  
+  #Compara as duas lista, e adiciona apenas os documentos não cadastrados
+  lista_links_existentes = list(map(lambda doc : doc.link, documentos_existentes))
+  lista_docs_para_adicionar = [doc for doc in lista_documentos if doc['link'] not in lista_links_existentes]
+
+  for doc in lista_docs_para_adicionar:
+    fundo_documento = FundoDocumentos(fundo, doc['nome'], doc['link'])
+    db.session.add(fundo_documento)

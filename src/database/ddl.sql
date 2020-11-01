@@ -18,4 +18,14 @@ create table fundo_detalhe (
 	valor_patrimonial numeric(8,2) null,
 	rentabilidade_mes numeric(4,2) null,
 	p_vp numeric(4,2) null
-)
+);
+
+CREATE TABLE public.fundo_documentos (
+	id SERIAL primary KEY,
+	fundo_id int4  NOT null references fundo(id),
+	nome varchar(120) NULL,
+	link varchar(255) NOT NULL,
+	data_insercao timestamp NULL,
+	CONSTRAINT link_unique UNIQUE (link)
+	
+);
