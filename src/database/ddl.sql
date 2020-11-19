@@ -23,9 +23,10 @@ create table fundo_detalhe (
 CREATE TABLE public.fundo_documentos (
 	id SERIAL primary KEY,
 	fundo_id int4  NOT null references fundo(id),
+	fnet_id int4 NOT NULL,
 	nome varchar(120) NULL,
-	link varchar(255) NOT NULL,
+	data_publicacao timestamp NULL,
+	data_referencia timestamp NULL,
 	data_insercao timestamp NULL,
-	CONSTRAINT link_unique UNIQUE (link)
-	
+	CONSTRAINT fnet_id_unique UNIQUE (fnet_id)
 );

@@ -60,12 +60,14 @@ def update_lista_fundos():
 def atualiza_documentos(fundo, lista_documentos):
 
   #Retorna lista de documentos, caso já existam
+  #TODO: Talvez aqui seria interessante trazer apenas os últimas 20 registros ordenados por daa publicação
   documentos_existentes = db.session.query(FundoDocumentos).filter(FundoDocumentos.fundo_id == fundo.id).all() if fundo.id else []
   
   #Compara as duas lista, e adiciona apenas os documentos não cadastrados
-  lista_links_existentes = list(map(lambda doc : doc.link, documentos_existentes))
-  lista_docs_para_adicionar = [doc for doc in lista_documentos if doc['link'] not in lista_links_existentes]
+  lista_links_existentes = list(map(lambda doc : doc.fnet_id, documentos_existentes))
+
+  lista_docs_para_adicionar = [doc for doc in lista_documentos if int(doc['fnet_id']) not in lista_links_existentes]
 
   for doc in lista_docs_para_adicionar:
-    fundo_documento = FundoDocumentos(fundo, doc['nome'], doc['link'])
+    fundo_documento = FundoDocumentos(fundo, doc['nome'], doc['fnet_id'], doc['data_publicacao'], doc['data_referencia'])
     db.session.add(fundo_documento)
