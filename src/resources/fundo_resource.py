@@ -9,6 +9,9 @@ from models.fundo_documentos import FundoDocumentos
 from flask_cors import CORS
 import os
 
+#Retirar
+# import time
+
 #Permite CORS em todas as rotas
 CORS(app)
 
@@ -16,6 +19,12 @@ logger = logging.getLogger(__name__)
 
 URL_RESOURCE_ARQUVO = '/fundos'
 SISTEMA_ORIGEM = 2
+
+#Retirar esta rota, é apenas para testes
+# @app.route(URL_RESOURCE_ARQUVO + '/teste-timeout', methods=['GET'])
+# def teste_timeout():
+#   time.sleep(2)
+#   return Response(status=200)
 
 @app.route(URL_RESOURCE_ARQUVO + '/atualizar-fundo', methods=['POST'])
 def update_lista_fundos():
@@ -34,6 +43,9 @@ def update_lista_fundos():
     if fundo is None:
       fundo = Fundo(codigo.upper(), nome, admin)
       db.session.add(fundo)
+
+    #Marca fundo como atualizado com a data do banco de dados
+    fundo.marcar_data_atualizacao()
 
     fundo_detalhe = db.session.query(FundoDetalhe).get(fundo.id) if fundo.id else None
     if fundo_detalhe == None:
