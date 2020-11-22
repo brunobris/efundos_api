@@ -6,6 +6,7 @@ from app import db, app
 from models.fundo import Fundo
 from models.fundo_detalhe import FundoDetalhe
 from models.fundo_documentos import FundoDocumentos
+from models.fundo_dividendos import FundoDividendos
 from flask_cors import CORS
 import os
 
@@ -36,7 +37,8 @@ def update_lista_fundos():
     admin = fundo_request['admin']
     detalhe_request = fundo_request['detalhe']
     lista_documentos = fundo_request['detalhe']['lista_documentos']
-    
+    lista_dividendos = fundo_request['detalhe']['lista_dividendos']
+
     fundo = db.session.query(Fundo).filter(Fundo.codigo.ilike(codigo)).first()
 
     fundo_detalhe = None
@@ -59,6 +61,7 @@ def update_lista_fundos():
                       
     db.session.add(fundo_detalhe)
     atualiza_documentos(fundo, lista_documentos)
+    atualiza_dividendos(fundo, lista_dividendos)
 
     db.session.commit() 
     
@@ -83,3 +86,12 @@ def atualiza_documentos(fundo, lista_documentos):
   for doc in lista_docs_para_adicionar:
     fundo_documento = FundoDocumentos(fundo, doc['nome'], doc['fnet_id'], doc['data_publicacao'], doc['data_referencia'])
     db.session.add(fundo_documento)
+
+def atualiza_dividendos(fundo, lista_dividendos):
+  logger.warning(lista_dividendos)
+
+  #TODO: Adicionar apenas os que já não estão cadastrados
+  for dividendo in lista_dividendos:
+    fundo_dividendos = FundoDividendos(fundo, dividendo['rendimento'],
+                        dividendo['data_base'], dividendo['data_pagamento'] )
+    db.session.add(fundo_dividendos)

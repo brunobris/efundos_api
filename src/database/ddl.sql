@@ -29,6 +29,15 @@ CREATE TABLE public.fundo_documentos (
 	nome varchar(120) NULL,
 	data_publicacao timestamp NULL,
 	data_referencia timestamp NULL,
-	data_insercao timestamp NULL,
+	data_insercao timestamp NOT NULL,
 	CONSTRAINT fnet_id_unique UNIQUE (fnet_id)
+);
+
+CREATE TABLE public.fundo_dividendos (
+	id SERIAL primary KEY,
+	fundo_id int4  NOT null references fundo(id),
+	rendimento numeric(6,2) NOT NULL,
+	data_base date NOT NULL,
+	data_pagamento date NOT NULL,
+	data_insercao timestamp NOT NULL
 );
