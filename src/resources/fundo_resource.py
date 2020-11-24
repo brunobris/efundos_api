@@ -8,10 +8,10 @@ from models.fundo_detalhe import FundoDetalhe
 from models.fundo_documentos import FundoDocumentos
 from models.fundo_dividendos import FundoDividendos
 from flask_cors import CORS
-import os
+from flask_jwt_extended import jwt_required
+from security.admin_required import admin_required
 
-#Retirar
-# import time
+import os
 
 #Permite CORS em todas as rotas
 CORS(app)
@@ -22,10 +22,13 @@ URL_RESOURCE_ARQUVO = '/fundos'
 SISTEMA_ORIGEM = 2
 
 #Retirar esta rota, é apenas para testes
-# @app.route(URL_RESOURCE_ARQUVO + '/teste-timeout', methods=['GET'])
-# def teste_timeout():
-#   time.sleep(2)
-#   return Response(status=200)
+@app.route(URL_RESOURCE_ARQUVO + '/teste', methods=['GET'])
+@admin_required
+def teste():
+  #time.sleep(2)
+  return [], 200
+
+
 
 @app.route(URL_RESOURCE_ARQUVO + '/atualizar-fundo', methods=['POST'])
 def update_lista_fundos():
