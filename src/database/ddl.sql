@@ -1,12 +1,14 @@
 CREATE TABLE public.fundo (
 	id serial NOT NULL,
 	codigo varchar(10) NOT NULL,
-	nome varchar(150) NOT NULL,
-	cnpj varchar(14) NULL,
+	acronimo varchar(10) NOT NULL,
+	razao_social varchar(150) NOT NULL,
+	cnpj varchar(14) NOT NULL,
 	administrador varchar(150) NULL,
 	data_insercao timestamp NOT NULL,
 	data_atualizacao date NOT NULL,
-	data_fim timestamp NULL,
+	inativo boolean NOT NULL,
+	data_inativado timestamp NULL,
 	CONSTRAINT codigo_unique UNIQUE (codigo),
 	CONSTRAINT fundo_pkey PRIMARY KEY (id)
 );

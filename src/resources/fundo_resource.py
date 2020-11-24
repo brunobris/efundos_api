@@ -33,8 +33,10 @@ def update_lista_fundos():
     fundo_request = request.get_json()
 
     codigo = fundo_request['symbol']
-    nome = fundo_request['nome']
+    acronimo = fundo_request['symbol']
+    razao_social = fundo_request['razao_social']
     admin = fundo_request['admin']
+    cnpj = fundo_request['cnpj']
     detalhe_request = fundo_request['detalhe']
     lista_documentos = fundo_request['detalhe']['lista_documentos']
     lista_dividendos = fundo_request['detalhe']['lista_dividendos']
@@ -43,7 +45,7 @@ def update_lista_fundos():
 
     fundo_detalhe = None
     if fundo is None:
-      fundo = Fundo(codigo.upper(), nome, admin)
+      fundo = Fundo(codigo.upper(), acronimo.upper(), razao_social, admin, cnpj)
       db.session.add(fundo)
 
     #Marca fundo como atualizado com a data do banco de dados
@@ -88,7 +90,7 @@ def atualiza_documentos(fundo, lista_documentos):
     db.session.add(fundo_documento)
 
 def atualiza_dividendos(fundo, lista_dividendos):
-  logger.warning(lista_dividendos)
+  #logger.warning(lista_dividendos)
 
   #TODO: Adicionar apenas os que já não estão cadastrados
   for dividendo in lista_dividendos:
