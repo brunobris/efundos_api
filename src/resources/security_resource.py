@@ -1,9 +1,8 @@
 import logging  
 from app import db, app
-from flask import json, jsonify
+from flask import json, jsonify, request
 from flask_jwt_extended import (
-    jwt_required, create_access_token,
-    get_jwt_identity
+    jwt_required, create_access_token
 )
 import datetime
 
@@ -28,7 +27,12 @@ def login():
 
 @app.route(URL_RESOURCE_ARQUVO + '/create-api-token', methods=['POST'])
 def create_api_token():
-    username = get_jwt_identity()
+    username = request.json.get('username', None)
+    password = request.json.get('password', None)
+
+    if username != 'efundos-scraper' or password != "eFuNdOs!2020#":
+        return jsonify({"msg": "Usuário ou senha inválidos"}), 401
+
     expires = datetime.timedelta(hours=22)
-    token = create_access_token(username, expires_delta=expires)
+    token = create_access_token(identity=username, expires_delta=expires, fresh=True)
     return jsonify({'token': token}), 201

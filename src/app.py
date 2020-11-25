@@ -10,7 +10,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 #Configurações do Flask-JWT-Extended
-app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
+app.config['JWT_SECRET_KEY'] = 'RG8gbm90IGF0dGVtcHQgdG8gZGVjb2RlIHRoaXMhIG9oIHdhaXQsIHlvdSBqdXN0IGRpZCBpdCE='
 
 jwt = JWTManager(app)
 
@@ -19,3 +19,10 @@ jwt = JWTManager(app)
 app.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024
 
 db = SQLAlchemy(app)
+
+
+#Loaders do token
+@jwt.user_claims_loader
+def adiciona_claims_ao_access_token(usuario):
+    if usuario == 'efundos-scraper':
+        return {'roles': 'scraper'}

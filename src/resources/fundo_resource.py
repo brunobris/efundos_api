@@ -9,7 +9,7 @@ from models.fundo_documentos import FundoDocumentos
 from models.fundo_dividendos import FundoDividendos
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required
-from security.admin_required import admin_required
+from security.roles_decorators import scraper_only
 
 import os
 
@@ -23,10 +23,9 @@ SISTEMA_ORIGEM = 2
 
 #Retirar esta rota, é apenas para testes
 @app.route(URL_RESOURCE_ARQUVO + '/teste', methods=['GET'])
-@admin_required
+@scraper_only
 def teste():
-  #time.sleep(2)
-  return [], 200
+  return jsonify([]), 200
 
 
 
