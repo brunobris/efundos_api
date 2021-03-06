@@ -19,7 +19,6 @@ CORS(app)
 logger = logging.getLogger(__name__)
 
 URL_RESOURCE_ARQUVO = '/fundos'
-SISTEMA_ORIGEM = 2
 
 #Retirar esta rota, é apenas para testes
 @app.route(URL_RESOURCE_ARQUVO + '/teste', methods=['GET'])
@@ -79,7 +78,7 @@ def update_lista_fundos():
 def atualiza_documentos(fundo, lista_documentos):
 
   #Retorna lista de documentos, caso já existam
-  #TODO: Talvez aqui seria interessante trazer apenas os últimas 20 registros ordenados por daa publicação
+  #TODO: Talvez aqui seria interessante trazer apenas os últimas 20 registros ordenados por data publicação
   documentos_existentes = db.session.query(FundoDocumentos).filter(FundoDocumentos.fundo_id == fundo.id).all() if fundo.id else []
   
   #Compara as duas lista, e adiciona apenas os documentos não cadastrados
@@ -94,8 +93,23 @@ def atualiza_documentos(fundo, lista_documentos):
 def atualiza_dividendos(fundo, lista_dividendos):
   #logger.warning(lista_dividendos)
 
-  #TODO: Adicionar apenas os que já não estão cadastrados
-  for dividendo in lista_dividendos:
+  #TODO: Talvez aqui seria interessante trazer apenas os últimas 20 registros ordenados por data publicação
+  dividendos_cadastrados = db.session.query(FundoDividendos).filter(FundoDividendos.fundo_id == fundo.id).all() if fundo.id else []
+  
+  lista_dividendos_cadastrados = list(map(lambda div : str(div.data_base), dividendos_cadastrados))
+
+  logger.warning("Div cadastrados: ")
+  logger.warning(lista_dividendos_cadastrados)
+
+  logger.warning("Div request:")
+  logger.warning(lista_dividendos)
+
+  #TODO: Melhorar a comparação, talvez seja melhor o scrapper já enviar a data sem horario
+  dividendos_para_cadastrar = [div for div in lista_dividendos if div['data_base'][:10] not in lista_dividendos_cadastrados]
+
+  logger.warning("Div para cadastrar: ")
+  logger.warning(dividendos_para_cadastrar)
+  for dividendo in dividendos_para_cadastrar:
     fundo_dividendos = FundoDividendos(fundo, dividendo['rendimento'],
                         dividendo['data_base'], dividendo['data_pagamento'] )
     db.session.add(fundo_dividendos)

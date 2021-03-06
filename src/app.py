@@ -10,6 +10,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 #Configurações do Flask-JWT-Extended
+#TODO: Colocar em variável de ambiente
 app.config['JWT_SECRET_KEY'] = 'RG8gbm90IGF0dGVtcHQgdG8gZGVjb2RlIHRoaXMhIG9oIHdhaXQsIHlvdSBqdXN0IGRpZCBpdCE='
 
 jwt = JWTManager(app)
@@ -24,5 +25,6 @@ db = SQLAlchemy(app)
 #Loaders do token
 @jwt.user_claims_loader
 def adiciona_claims_ao_access_token(usuario):
+    #TODO: Colocar usuário em variável de ambiente
     if usuario == 'efundos-scraper':
         return {'roles': 'scraper'}
